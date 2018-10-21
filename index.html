@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='width=device-width'/>
+    <link rel="stylesheet" href="style/main.css">
+
+    <script src="../libs/three.js/three.js"></script>
+    <script src="../libs/jquery-3.3.1/jquery-3.3.1.js"></script>
+    <script src="../libs/three.js/controls/OrbitControls.js"></script>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/game.js"></script>
+    <script src="scripts/objects.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      var canvas = document.getElementById("webglcanvas");
+      Graphics.createScene(canvas);
+      Graphics.run();
+    });
+    $(document).keyup(function(e) {
+      switch(e.which) {
+        case 37: // left
+        Game.moveLeft();
+        break;
+        case 38: // up
+        Game.moveUp();
+        break;
+        case 39: // right
+        Game.moveRight();
+        break;
+        default: return; // exit this handler for other keys
+      }
+      e.preventDefault(); // prevent the default action (scroll / move caret)
+    });
+    </script>
+    <title>Crossy Road Clone</title>
+  </head>
+  <body>
+    <div id="container">
+      <canvas id="webglcanvas"></canvas>
+    </div>
+  </body>
+</html>

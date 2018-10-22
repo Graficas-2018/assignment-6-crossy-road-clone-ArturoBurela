@@ -55,7 +55,7 @@ Game.verfiyCollisions = function(){
     }
   }
   // Muere con los autos
-  for (car of cars) {
+  for (car of this.cars) {
 
   }
 }

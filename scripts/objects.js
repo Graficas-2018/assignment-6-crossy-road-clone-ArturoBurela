@@ -63,7 +63,14 @@ ObjectGenerator.create = function (geometry, material) {
 };
 
 ObjectGenerator.createPlayer = function () {
-  return this.create(this.objects.player.geometry, this.objects.player.material);
+  var player = this.create(this.objects.player.geometry, this.objects.player.material);
+  // Add more colliders to player
+  var BBox = new THREE.BoxHelper(player.mesh, 0x00ff00);
+  console.log(BBox);
+  var BoxFront = new THREE.Box3().setFromObject(player.BBox);
+  console.log(BoxFront);
+  player.BoxFront = BoxFront;
+  return player;
 };
 
 ObjectGenerator.createThree = function () {

@@ -3,7 +3,8 @@ var Game = {
   lastKey: null,
   threes: [],
   logs:[],
-  cars: []
+  cars: [],
+  clock: new THREE.Clock()
 };
 
 Game.init = function() {
@@ -12,11 +13,46 @@ Game.init = function() {
   scene.add(this.player);
   // Add some things
   three = ObjectGenerator.createThree();
-  three.moveLeft();
-  three.moveLeft();
+  three.moveLeft(2);
+  scene.add(three);
+  this.threes.push(three);
+  three = ObjectGenerator.createThree();
+  three.moveUp(2);
+  three.moveRight(5);
+  scene.add(three);
+  this.threes.push(three);
+  three = ObjectGenerator.createThree();
+  three.moveUp(4);
+  three.moveLeft(5);
+  scene.add(three);
+  this.threes.push(three);
+  three = ObjectGenerator.createThree();
+  three.moveUp(4);
+  three.moveRight(1);
   scene.add(three);
   this.threes.push(three);
   scene.add(ObjectGenerator.createGrassSection().grass);
+  // Create empty grass
+  var grass = ObjectGenerator.createGrassSection();
+  grass.grass.moveUp(2);
+  scene.add(grass.grass);
+  // Other createGrassSection
+  grass = ObjectGenerator.createGrassSection();
+  grass.grass.moveUp(4);
+  scene.add(grass.grass);
+  //Create a Road
+  var road = ObjectGenerator.createRoad();
+  road.moveUp(6);
+  scene.add(road);
+  // Add a car
+  var car = ObjectGenerator.createCar();
+  car.moveUp(6);
+  car.moveLeft(7);
+  this.cars.push(car);
+  scene.add(car);
+  // init score and time
+  this.score = 0;
+
 }
 
 Game.moveLeft = function(){
@@ -32,6 +68,7 @@ Game.moveRight = function(){
 Game.moveUp = function(){
   this.player.moveUp();
   this.lastKey = "u";
+  this.score += 10;
 }
 
 Game.verfiyCollisions = function(){
@@ -56,6 +93,20 @@ Game.verfiyCollisions = function(){
   }
   // Muere con los autos
   for (car of this.cars) {
+    if (this.player.Box.intersectsBox(car.Box)) {
+      console.log("Atropellado");
+    }
+  }
+}
 
+Game.moveAndUpdate = function(){
+  // Get time getDelta
+  var delta = this.clock.getDelta();
+  // Move cars
+  for (car of this.cars) {
+    car.moveRight(5*delta);
+    if(car.position.z > 8){
+      car.moveLeft(15);
+    }
   }
 }

@@ -40,10 +40,8 @@ function run() {
 }
 
 function animate() {
-  //console.log(player.Box.intersectsBox(three.Box));
-  //console.log(camera.position);
-  //console.log("Esta funcando");
   Game.verfiyCollisions();
+  Game.moveAndUpdate();
 }
 
 Graphics.createScene = createScene;

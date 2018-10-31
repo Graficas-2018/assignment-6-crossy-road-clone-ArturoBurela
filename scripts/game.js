@@ -4,7 +4,8 @@ var Game = {
   threes: [],
   logs:[],
   cars: [],
-  clock: new THREE.Clock()
+  clock: new THREE.Clock(),
+  scene:[]
 };
 
 Game.init = function() {
@@ -56,47 +57,42 @@ Game.init = function() {
 }
 
 Game.moveLeft = function(){
+  for (three of this.threes) {
+    if (this.player.BoxLeft.intersectsBox(three.Box)) {
+      return;
+    }
+  }
   this.player.moveLeft();
-  this.lastKey = "l";
 }
 
 Game.moveRight = function(){
+  for (three of this.threes) {
+    if (this.player.BoxRight.intersectsBox(three.Box)) {
+      return;
+    }
+  }
   this.player.moveRight();
-  this.lastKey = "r";
 }
 
 Game.moveUp = function(){
+  for (three of this.threes) {
+    if (this.player.BoxFront.intersectsBox(three.Box)) {
+      return;
+    }
+  }
   this.player.moveUp();
-  this.lastKey = "u";
   this.score += 10;
 }
 
 Game.verfiyCollisions = function(){
-  // Bloquear si es con árboles
-  for (three of this.threes) {
-    if (this.player.Box.intersectsBox(three.Box)) {
-      console.log("Chocando con arbol");
-      switch (this.lastKey) {
-        case "l":
-        this.moveRight();
-        break;
-        case "r":
-        this.moveLeft();
-        break;
-        case "u":
-        this.player.moveDown();
-        break;
-        default:
-        break;
-      }
-    }
-  }
   // Muere con los autos
   for (car of this.cars) {
     if (this.player.Box.intersectsBox(car.Box)) {
       console.log("Atropellado");
     }
   }
+  // Muere con agua y sin tronco
+
 }
 
 Game.moveAndUpdate = function(){
@@ -109,4 +105,7 @@ Game.moveAndUpdate = function(){
       car.moveLeft(15);
     }
   }
+  // Move logs
+  //Move escene
+
 }

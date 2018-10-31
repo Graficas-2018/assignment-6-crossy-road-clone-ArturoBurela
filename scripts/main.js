@@ -28,6 +28,7 @@ function createScene(canvas) {
   scene.add( mesh );
   orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
   orbitControls.enableKeys=false;
+  ObjectGenerator.loadObjs();
   Game.init();
 }
 

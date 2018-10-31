@@ -1,9 +1,11 @@
 var ObjectGenerator = {};
+var loader = new THREE.OBJLoader();
 
 ObjectGenerator.objects = {
   player:{
     geometry: new THREE.BoxGeometry(1, 1, 1),
-    material: new THREE.MeshPhongMaterial({color:0xb80128})
+    material: new THREE.MeshPhongMaterial({color:0xb80128}),
+    url: 'models/duck.obj'
   },
   three:{
     geometry: new THREE.BoxGeometry(0.9, 0.9, 0.9),
@@ -31,6 +33,26 @@ ObjectGenerator.objects = {
   }
 };
 
+ObjectGenerator.loadObjs = function () {
+  loader.load(
+  	// resource URL
+  	this.objects.player.url,
+  	// called when resource is loaded
+  	function ( object ) {
+  		//scene.add( object );
+      ObjectGenerator.objects.player.object = object;
+  	},
+  	// called when loading is in progresses
+  	function ( xhr ) {
+  		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+  	},
+  	// called when loading has errors
+  	function ( error ) {
+  		console.log( 'An error happened' );
+  	}
+  );
+}
+
 ObjectGenerator.create = function (geometry, material) {
   var mesh = new THREE.Mesh(geometry, material);
   var BBox = new THREE.BoxHelper(mesh, 0x00ff00);
@@ -39,37 +61,50 @@ ObjectGenerator.create = function (geometry, material) {
   mesh.BBox = BBox;
   var Box = new THREE.Box3().setFromObject(BBox);
   mesh.Box = Box;
-  mesh.moveUp = function (n = 1) {
-    mesh.position.x += n;
+  //BoxFront
+  mesh.BoxFront = new THREE.Box3().setFromObject(BBox);
+  mesh.BoxFront.translate(new THREE.Vector3( 1, 0, 0 ));
+  //BoxLeft
+  mesh.BoxLeft = new THREE.Box3().setFromObject(BBox);
+  mesh.BoxLeft.translate(new THREE.Vector3( 0, 0, -1 ));
+  //BoxRight
+  mesh.BoxRight = new THREE.Box3().setFromObject(BBox);
+  mesh.BoxRight.translate(new THREE.Vector3( 0, 0, 1 ));
+
+  mesh.updateColliders = function () {
     this.BBox.update();
     this.Box = new THREE.Box3().setFromObject(this.BBox);
+    this.BoxFront = new THREE.Box3().setFromObject(this.BBox);
+    this.BoxFront.translate(new THREE.Vector3( 1, 0, 0 ));
+    //BoxLeft
+    mesh.BoxLeft = new THREE.Box3().setFromObject(this.BBox);
+    mesh.BoxLeft.translate(new THREE.Vector3( 0, 0, -1 ));
+    //BoxRight
+    mesh.BoxRight = new THREE.Box3().setFromObject(this.BBox);
+    mesh.BoxRight.translate(new THREE.Vector3( 0, 0, 1 ));
+  }
+
+  mesh.moveUp = function (n = 1) {
+    mesh.position.x += n;
+    this.updateColliders();
   };
   mesh.moveDown = function (n = 1) {
     mesh.position.x -= n;
-    this.BBox.update();
-    this.Box = new THREE.Box3().setFromObject(this.BBox);
+    this.updateColliders();
   };
   mesh.moveLeft = function (n = 1) {
     mesh.position.z -= n;
-    this.BBox.update();
-    this.Box = new THREE.Box3().setFromObject(this.BBox);
+    this.updateColliders();
   };
   mesh.moveRight = function (n = 1) {
     mesh.position.z += n;
-    this.BBox.update();
-    this.Box = new THREE.Box3().setFromObject(this.BBox);
+    this.updateColliders();
   };
   return mesh;
 };
 
 ObjectGenerator.createPlayer = function () {
   var player = this.create(this.objects.player.geometry, this.objects.player.material);
-  // Add more colliders to player
-  var BBox = new THREE.BoxHelper(player.mesh, 0x00ff00);
-  console.log(BBox);
-  var BoxFront = new THREE.Box3().setFromObject(player.BBox);
-  console.log(BoxFront);
-  player.BoxFront = BoxFront;
   return player;
 };
 

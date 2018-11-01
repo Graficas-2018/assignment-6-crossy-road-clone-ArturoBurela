@@ -16,19 +16,19 @@ ObjectGenerator.objects = {
     material: new THREE.MeshPhongMaterial({color:0xf4a419})
   },
   log:{
-    geometry: new THREE.BoxGeometry(1, 0.1, 1),
+    geometry: new THREE.BoxGeometry(2, 0.1, 3),
     material: new THREE.MeshPhongMaterial({color:0x5e3f09})
   },
   grass:{
-    geometry: new THREE.PlaneGeometry(15, 2),
+    geometry: new THREE.PlaneGeometry(20, 2),
     material: new THREE.MeshPhongMaterial({color:0x1e6413, side: THREE.DoubleSide})
   },
   road:{
-    geometry: new THREE.PlaneGeometry(15, 2),
+    geometry: new THREE.PlaneGeometry(20, 2),
     material: new THREE.MeshPhongMaterial({color:0x4d504d, side: THREE.DoubleSide})
   },
   water:{
-    geometry: new THREE.PlaneGeometry(15, 2),
+    geometry: new THREE.PlaneGeometry(20, 2),
     material: new THREE.MeshPhongMaterial({color:0x4ea0e5, side: THREE.DoubleSide})
   }
 };
@@ -100,12 +100,15 @@ ObjectGenerator.create = function (geometry, material) {
     mesh.position.z += n;
     this.updateColliders();
   };
+  mesh.roundPosition = function () {
+    mesh.position.z = Math.round(mesh.position.z);
+    this.updateColliders();
+  }
   return mesh;
 };
 
 ObjectGenerator.createPlayer = function () {
-  var player = this.create(this.objects.player.geometry, this.objects.player.material);
-  return player;
+  return this.create(this.objects.player.geometry, this.objects.player.material);
 };
 
 ObjectGenerator.createThree = function () {
@@ -117,7 +120,9 @@ ObjectGenerator.createCar = function () {
 };
 
 ObjectGenerator.createLog = function () {
-  return this.create(this.objects.log.geometry, this.objects.log.material);
+  var log = this.create(this.objects.log.geometry, this.objects.log.material);
+  log.position.y = -0.5;
+  return log;
 }
 
 function translatePlane(g) {

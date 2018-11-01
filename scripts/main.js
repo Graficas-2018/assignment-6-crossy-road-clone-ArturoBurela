@@ -25,7 +25,7 @@ function createScene(canvas) {
   mesh.rotation.x = -Math.PI / 2;
   mesh.position.y = -4.02;
   // Add the mesh to our group
-  scene.add( mesh );
+  //scene.add( mesh );
   orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
   orbitControls.enableKeys=false;
   ObjectGenerator.loadObjs();

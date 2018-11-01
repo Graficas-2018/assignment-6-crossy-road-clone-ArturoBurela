@@ -21,3 +21,12 @@ canvas {
   height: 100vh !important;
   z-index: -10;
 }
+
+#score{
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 3rem;
+  background-color: aliceblue;
+  font-style: italic;
+}

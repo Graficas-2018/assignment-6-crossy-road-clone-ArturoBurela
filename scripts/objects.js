@@ -16,7 +16,7 @@ ObjectGenerator.objects = {
     material: new THREE.MeshPhongMaterial({color:0xf4a419})
   },
   log:{
-    geometry: new THREE.BoxGeometry(1, 1, 1),
+    geometry: new THREE.BoxGeometry(1, 0.1, 1),
     material: new THREE.MeshPhongMaterial({color:0x5e3f09})
   },
   grass:{
@@ -116,6 +116,10 @@ ObjectGenerator.createCar = function () {
   return this.create(this.objects.car.geometry, this.objects.car.material);
 };
 
+ObjectGenerator.createLog = function () {
+  return this.create(this.objects.log.geometry, this.objects.log.material);
+}
+
 function translatePlane(g) {
   g.rotation.x = -Math.PI / 2;
   g.rotation.z = -Math.PI / 2;
@@ -133,6 +137,28 @@ ObjectGenerator.createRoad = function () {
   translatePlane(g);
   return g;
 };
+
+ObjectGenerator.createWater = function () {
+  var g = this.create(this.objects.water.geometry, this.objects.water.material);
+  translatePlane(g);
+  return g;
+};
+
+ObjectGenerator.createGrassTile = function () {
+  var tile = {};
+  tile.grass = this.createGrass();
+  tile.trees = [];
+  for (var i = 0; i < Math.floor((Math.random() * 10) + 1); i++) {
+    var t = this.createThree();
+    if (Math.random() > 0.5) {
+      t.moveLeft(Math.floor((Math.random() * 8)));
+    } else {
+      t.moveRight(Math.floor((Math.random() * 8)));
+    }
+    tile.trees.push(t);
+  }
+  return tile;
+}
 
 ObjectGenerator.createGrassSection = function () {
   var section = new THREE.Object3D;

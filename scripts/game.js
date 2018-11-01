@@ -1,11 +1,14 @@
 var Game = {
   score: 0,
   lastKey: null,
+  game: true,
   threes: [],
   logs:[],
   cars: [],
   clock: new THREE.Clock(),
-  scene:[]
+  scene:[],
+  tiles: [],
+  offset: 0
 };
 
 Game.init = function() {
@@ -45,6 +48,16 @@ Game.init = function() {
   var road = ObjectGenerator.createRoad();
   road.moveUp(6);
   scene.add(road);
+  //Create Water
+  var w = ObjectGenerator.createWater();
+  w.moveUp(8);
+  scene.add(w);
+  //Create log
+  var log = ObjectGenerator.createLog();
+  log.moveUp(8);
+  log.moveRight(7);
+  this.logs.push(log);
+  scene.add(log);
   // Add a car
   var car = ObjectGenerator.createCar();
   car.moveUp(6);
@@ -53,7 +66,30 @@ Game.init = function() {
   scene.add(car);
   // init score and time
   this.score = 0;
+  this.offset = 10;
+  /*for (var i = 0; i < 20; i++) {
+    var r = Math.random();
+    if (r<=0.333) {
+      var tile = ObjectGenerator.createGrassTile();
+      // Move tile objects
+      for (t of tile.trees) {
+        t.moveUp(this.offset);
+        this.threes.push(t);
+        scene.add(t);
+      }
+      //Move tile
+      tile.grass.moveUp(this.offset);
+      scene.add(tile.grass);
+      this.tiles.push(tile);
+      continue;
+    }
+    if (r<=0.666) {
+      continue;
+    }
+    console.log("Creando tile");
 
+    this.offset += 2;
+  }*/
 }
 
 Game.moveLeft = function(){
@@ -84,15 +120,29 @@ Game.moveUp = function(){
   this.score += 10;
 }
 
+Game.updateTiles = function(){
+
+}
+
+Game.endGame = function () {
+  this.game = false;
+}
+
+Game.run = function () {
+  if (this.game) {
+    Game.verfiyCollisions();
+    Game.moveAndUpdate();
+  }
+}
+
 Game.verfiyCollisions = function(){
   // Muere con los autos
   for (car of this.cars) {
     if (this.player.Box.intersectsBox(car.Box)) {
-      console.log("Atropellado");
+      this.endGame();
     }
   }
   // Muere con agua y sin tronco
-
 }
 
 Game.moveAndUpdate = function(){
@@ -107,5 +157,11 @@ Game.moveAndUpdate = function(){
   }
   // Move logs
   //Move escene
-
+  // Update score and time
+  document.getElementById("score").innerHTML = "Score: " + this.score + "<br> Time: " + Math.round(this.clock.elapsedTime);
+  // Mover camara
+  camera.position.x += delta;
+  if(camera.position.x > this.player.position.x - 2){
+    this.endGame();
+  }
 }

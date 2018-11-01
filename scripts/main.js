@@ -14,7 +14,7 @@ function createScene(canvas) {
   scene = new THREE.Scene();
   // Add  a camera so we can view the scene
   camera = new THREE.PerspectiveCamera( 45, canvas.width / canvas.height, 1, 4000 );
-  camera.position.set(-20, 13, 9);
+  camera.position.set(-9, 20, 0);
   camera.lookAt(0,-4,0);
   scene.add(camera);
   ambientLight = new THREE.AmbientLight ( 0xffffff );
@@ -37,12 +37,12 @@ function run() {
   // Render the scene
   renderer.render( scene, camera );
   this.animate();
-  orbitControls.update();
+  //orbitControls.update();
+  //console.log(camera.position);
 }
 
 function animate() {
-  Game.verfiyCollisions();
-  Game.moveAndUpdate();
+  Game.run();
 }
 
 Graphics.createScene = createScene;

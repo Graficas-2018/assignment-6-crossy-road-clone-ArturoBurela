@@ -11,6 +11,10 @@ ObjectGenerator.objects = {
     geometry: new THREE.BoxGeometry(0.9, 0.9, 0.9),
     material: new THREE.MeshPhongMaterial({color:0x00ff54})
   },
+  barrier:{
+    geometry: new THREE.BoxGeometry(2, 0.9, 0.9),
+    material: new THREE.MeshPhongMaterial({color:0xac5900})
+  },
   car:{
     geometry: new THREE.BoxGeometry(1.5, 1, 1),
     material: new THREE.MeshPhongMaterial({color:0xf4a419})
@@ -20,15 +24,15 @@ ObjectGenerator.objects = {
     material: new THREE.MeshPhongMaterial({color:0x5e3f09})
   },
   grass:{
-    geometry: new THREE.PlaneGeometry(20, 2),
+    geometry: new THREE.PlaneGeometry(40, 2),
     material: new THREE.MeshPhongMaterial({color:0x1e6413, side: THREE.DoubleSide})
   },
   road:{
-    geometry: new THREE.PlaneGeometry(20, 2),
+    geometry: new THREE.PlaneGeometry(40, 2),
     material: new THREE.MeshPhongMaterial({color:0x4d504d, side: THREE.DoubleSide})
   },
   water:{
-    geometry: new THREE.PlaneGeometry(20, 2),
+    geometry: new THREE.PlaneGeometry(40, 2),
     material: new THREE.MeshPhongMaterial({color:0x4ea0e5, side: THREE.DoubleSide})
   }
 };
@@ -125,6 +129,10 @@ ObjectGenerator.createLog = function () {
   return log;
 }
 
+ObjectGenerator.createBarrier = function () {
+  return this.create(this.objects.barrier.geometry, this.objects.barrier.material);
+}
+
 function translatePlane(g) {
   g.rotation.x = -Math.PI / 2;
   g.rotation.z = -Math.PI / 2;
@@ -162,6 +170,20 @@ ObjectGenerator.createGrassTile = function () {
     }
     tile.trees.push(t);
   }
+  return tile;
+}
+
+ObjectGenerator.createWaterTile = function () {
+  var tile = {};
+  tile.water = this.createWater();
+  tile.log = this.createLog();
+  return tile;
+}
+
+ObjectGenerator.createRoadTile = function () {
+  var tile = {};
+  tile.road = this.createRoad();
+  tile.car = this.createCar();
   return tile;
 }
 

@@ -9,7 +9,8 @@ var Game = {
   scene:[],
   tiles: [],
   waterTiles: [],
-  offset: 0
+  offset: 0,
+  addTile: false
 };
 
 Game.init = function() {
@@ -68,31 +69,25 @@ Game.init = function() {
   scene.add(car);
   // init score and time
   this.score = 0;
-  this.offset = 10;
-  for (var i = 0; i < 20; i++) {
-    var r = Math.random();
-    // Create grass tile
-    if (r<=0.333) {
-      var tile = ObjectGenerator.createGrassTile();
-      // Move tile objects
-      for (t of tile.trees) {
-        t.moveUp(this.offset);
-        this.threes.push(t);
-        scene.add(t);
-      }
-      //Move tile
-      tile.grass.moveUp(this.offset);
-      scene.add(tile.grass);
-      this.tiles.push(tile);
-      continue;
-    }
-    // Create water tile
-    if (r<=0.666) {
-      continue;
-    }
-    // Create road tile
-    console.log("Creando tile");
+  //Barriers for the first section
+  for (var i = 0; i < 5; i++) {
+    // Add left barriers
+    var t = ObjectGenerator.createBarrier();
+    t.moveUp(this.offset);
+    t.moveLeft(8);
+    scene.add(t);
+    this.threes.push(t);
+    var t = ObjectGenerator.createBarrier();
+    t.moveUp(this.offset);
+    t.moveRight(8);
+    scene.add(t);
+    this.threes.push(t);
     this.offset += 2;
+  }
+  this.offset = 8;
+  // Generate first 20 tiles randomly
+  for (var i = 0; i < 20; i++) {
+    this.updateTiles();
   }
 }
 
@@ -134,11 +129,69 @@ Game.moveUp = function(){
   }
   this.player.moveUp();
   this.score += 10;
-  // Update tile
+  this.updateTiles();
 }
 
 Game.updateTiles = function(){
-
+  if (this.addTile) {
+    this.addTile = false;
+    return;
+  }
+  this.addTile = true;
+  // Add new tile to make infinite game
+  this.offset += 2;
+  // Add left barriers
+  var t = ObjectGenerator.createBarrier();
+  t.moveUp(this.offset);
+  t.moveLeft(8);
+  scene.add(t);
+  this.threes.push(t);
+  var t = ObjectGenerator.createBarrier();
+  t.moveUp(this.offset);
+  t.moveRight(8);
+  scene.add(t);
+  this.threes.push(t);
+  var r = Math.random();
+  // Create grass tile
+  if (r<=0.333) {
+    var tile = ObjectGenerator.createGrassTile();
+    // Move tile objects
+    for (t of tile.trees) {
+      t.moveUp(this.offset);
+      this.threes.push(t);
+      scene.add(t);
+    }
+    //Move tile
+    tile.grass.moveUp(this.offset);
+    scene.add(tile.grass);
+    this.tiles.push(tile);
+  }
+  // Create water tile
+  else if (r<=0.666) {
+    var tile = ObjectGenerator.createWaterTile();
+    //Move log
+    tile.log.moveUp(this.offset);
+    tile.log.moveRight(Math.random()*6);
+    this.logs.push(tile.log);
+    // Move tile
+    tile.water.moveUp(this.offset);
+    this.waterTiles.push(tile.water);
+    //Add to scene
+    scene.add(tile.log);
+    scene.add(tile.water);
+  } else {
+    // Create road tile
+    var tile = ObjectGenerator.createRoadTile();
+    // Move car
+    tile.car.moveUp(this.offset);
+    tile.car.moveLeft(Math.random()*7);
+    this.cars.push(tile.car);
+    //Move tile
+    tile.road.moveUp(this.offset);
+    // Add to scene
+    scene.add(tile.car);
+    scene.add(tile.road);
+  }
 }
 
 Game.endGame = function () {
@@ -149,6 +202,9 @@ Game.run = function () {
   if (this.game) {
     Game.verfiyCollisions();
     Game.moveAndUpdate();
+  } else {
+    // Update score and time
+    document.getElementById("score").innerHTML = "GAME OVER!";
   }
 }
 
@@ -159,7 +215,6 @@ Game.verfiyCollisions = function(){
       this.endGame();
     }
   }
-  // Muere con agua y sin tronco
 }
 
 Game.moveAndUpdate = function(){
@@ -191,12 +246,11 @@ Game.moveAndUpdate = function(){
       this.endGame();
     }
   }
-
   // Update score and time
   document.getElementById("score").innerHTML = "Score: " + this.score + "<br> Time: " + Math.round(this.clock.elapsedTime);
   // Mover camara
   camera.position.x += delta;
-  if(camera.position.x > this.player.position.x - 2){
+  if(camera.position.x > this.player.position.x - 1){
     this.endGame();
   }
 }
